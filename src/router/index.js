@@ -7,8 +7,18 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "home",
+    name: "Home",
     component: HomeView,
+  },
+  {
+    path: "/settings/connection",
+    name: "ConnectionSettings",
+    component: () => import("@/views/Settings/Connection.vue"),
+  },
+  {
+    path: "/settings/general",
+    name: "GeneralSettings",
+    component: () => import("@/views/Settings/General.vue"),
   },
 ];
 

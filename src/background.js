@@ -1,8 +1,12 @@
 "use strict";
 
-import { app, protocol, BrowserWindow } from "electron";
+import { app, protocol, BrowserWindow, ipcMain, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+import Store from "electron-store";
+
+const store = new Store();
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Scheme must be registered before the app is ready
@@ -22,6 +26,44 @@ async function createWindow() {
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
     },
   });
+
+  const templateMenu = [
+    {
+      label: "Inicio",
+      click() {
+        win.webContents.send("set-view", { name: "Home" });
+      },
+    },
+    {
+      label: "Configuración",
+      submenu: [
+        {
+          label:"General",
+          click(){
+            win.webContents.send("set-view",{name:"GeneralSettings"})
+          }
+        },
+        {
+          label: "Conexión",
+          click() {
+            win.webContents.send("set-view", { name: "ConnectionSettings" });
+          },
+        },
+      ],
+    },
+  ];
+
+  templateMenu.push({
+    label: "Developer",
+    accelerator: "Ctrl+Shift+I",
+    click() {
+      win.webContents.toggleDevTools();
+    },
+  });
+
+  const mainMenu = Menu.buildFromTemplate(templateMenu);
+
+  win.setMenu(mainMenu);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -78,3 +120,26 @@ if (isDevelopment) {
     });
   }
 }
+
+// Init
+function init() {
+  if (!store.get("server")) {
+    store.set("server", {
+      host: "http://localhost",
+      port: 9090,
+      password: "",
+    });
+  }
+}
+
+init();
+
+// Store Data
+ipcMain.handle("getData", async (event, data) => {
+  return store.get(data.key);
+});
+
+ipcMain.handle("setData", async (event, data) => {
+  store.set(data.key, data.value);
+  return true;
+});
