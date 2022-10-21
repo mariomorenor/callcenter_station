@@ -3,9 +3,30 @@
 import { app, protocol, BrowserWindow, ipcMain, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+
+// Data persistence
 import Store from "electron-store";
 
+// Initialize data persistence
 const store = new Store();
+
+if (!store.get("server")) {
+  store.set("server", {
+    host: "http://localhost",
+    port: 9090,
+    password: "",
+  });
+}
+
+// Store Data
+ipcMain.handle("getData", async (event, data) => {
+  return store.get(data.key);
+});
+
+ipcMain.handle("setData", async (event, data) => {
+  store.set(data.key, data.value);
+  return true;
+});
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -38,10 +59,10 @@ async function createWindow() {
       label: "Configuración",
       submenu: [
         {
-          label:"General",
-          click(){
-            win.webContents.send("set-view",{name:"GeneralSettings"})
-          }
+          label: "General",
+          click() {
+            win.webContents.send("set-view", { name: "GeneralSettings" });
+          },
         },
         {
           label: "Conexión",
@@ -120,26 +141,3 @@ if (isDevelopment) {
     });
   }
 }
-
-// Init
-function init() {
-  if (!store.get("server")) {
-    store.set("server", {
-      host: "http://localhost",
-      port: 9090,
-      password: "",
-    });
-  }
-}
-
-init();
-
-// Store Data
-ipcMain.handle("getData", async (event, data) => {
-  return store.get(data.key);
-});
-
-ipcMain.handle("setData", async (event, data) => {
-  store.set(data.key, data.value);
-  return true;
-});

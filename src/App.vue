@@ -47,6 +47,14 @@ export default {
           this.setToken(data.token)
         });
     }
+  },
+  sockets:{
+    connection(){
+      console.log("sdkfjhsdjk");
+    },
+    disconnect(){
+      console.log("sadksjaudyfsgdyufsgdufgsd");
+    }
   }
 }
 </script>
