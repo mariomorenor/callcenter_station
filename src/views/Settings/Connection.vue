@@ -1,6 +1,5 @@
 <template>
-    <div class="container mt-5">
-        <b-loading v-model="isLoading"></b-loading>
+    <div class="mt-5">
         <form action="#">
             <h1 class="title">Configuración de Conexión</h1>
             <b-field label="Dirección del Servidor">
@@ -8,6 +7,9 @@
             </b-field>
             <b-field label="Puerto Servidor">
                 <b-input v-model="server.port"></b-input>
+            </b-field>
+            <b-field label="Puerto Peer">
+                <b-input v-model="server.peer_port"></b-input>
             </b-field>
             <b-field label="Contraseña de Acceso">
                 <b-input v-model="server.password" password-reveal type="password"></b-input>
@@ -32,9 +34,10 @@ export default {
             server: {
                 host: "",
                 port: "",
-                password: ""
+                password: "",
+                peer_port:""
             },
-            isLoading: false
+            
         }
     },
     computed: {
@@ -46,12 +49,11 @@ export default {
             .then(server => {
                 this.server = server
             })
-
     },
     methods: {
-        ...mapMutations(["setToken", "setPassword"]),
+        ...mapMutations(["setToken", "setServerSettings"]),
         save() {
-            this.isLoading = true;
+            
             ipcRenderer
                 .invoke("setData",
                     {
@@ -59,20 +61,23 @@ export default {
                         value: this.server
                     })
                 .then(() => {
-                    this.axios.defaults.baseURL = `${this.server.host}:${this.server.port}`
+                    this.axios.defaults.baseURL = `${this.server.host}:${this.server.port}`    
                     this.setToken(this.getAccessToken());
-                    this.setPassword(this.server.password);
+                    this.setServerSettings(this.server.password);
                     messages.SUCCESS()
-                }).finally(() => {
-                    this.isLoading = false
-                })
+                });
         },
         async getAccessToken() {
-            const { data } = await this.axios
-                .post("get-token-for-stations", { password: this.server.password })
-                .catch(HANDLE_ERROR_RESPONSE)
+            try {
 
-            return data.token
+                const { data } = await this.axios
+                    .post("get-token-for-stations", { password: this.server.password })
+                    .catch(HANDLE_ERROR_RESPONSE)
+
+                return data.token
+            } catch (error) {
+                return "no-token"
+            }
         },
         test() {
             this.getAccessToken().then(token => {
@@ -88,7 +93,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 form {
     width: 70%;
     margin: auto;

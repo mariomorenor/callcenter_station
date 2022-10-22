@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+import ip from "ip";
 
 // Data persistence
 import Store from "electron-store";
@@ -15,6 +16,13 @@ if (!store.get("server")) {
     host: "http://localhost",
     port: 9090,
     password: "",
+  });
+}
+
+if (!store.get("station")) {
+  store.set("station", {
+    ip_address: ip.address(),
+    departments:[]
   });
 }
 
@@ -38,7 +46,7 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
+    width: 1000,
     height: 600,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone

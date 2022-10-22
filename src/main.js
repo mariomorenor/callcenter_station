@@ -12,25 +12,30 @@ import VueSocketIO from "vue-socket.io";
 import { ipcRenderer } from "electron";
 
 ipcRenderer.invoke("getData", { key: "server" }).then((server) => {
+  axios.defaults.baseURL = `${server.host}:${server.port}`
   Vue.use(
     new VueSocketIO({
       debug: true,
-      connection: io(`${server.host}:${server.port}`),
+      connection: io(`${server.host}:${server.port}`,{path:"/socket"}),
+      vuex: {
+        store,
+        actionPrefix: "SOCKET_",
+        mutationPrefix: "SOCKET_",
+      },
     })
   );
+  Vue.use(Buefy, {
+    defaultIconPack: "fas",
+    defaultIconComponent: "fa-icon",
+  });
+
+  Vue.use(VueAxios, axios);
+
+  Vue.config.productionTip = false;
+
+  new Vue({
+    router,
+    store,
+    render: (h) => h(App),
+  }).$mount("#app");
 });
-
-Vue.use(Buefy, {
-  defaultIconPack: "fas",
-  defaultIconComponent: "fa-icon",
-});
-
-Vue.use(VueAxios, axios);
-
-Vue.config.productionTip = false;
-
-new Vue({
-  router,
-  store,
-  render: (h) => h(App),
-}).$mount("#app");
