@@ -19,10 +19,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(["token", "server", "connectedDepartments"])
+    ...mapState(["token", "server", "connectedDepartments","calls"])
   },
   methods: {
-    ...mapMutations(["setToken", "setServerSettings", "setConnectedDepartments"]),
+    ...mapMutations(["setToken", "setServerSettings", "setConnectedDepartments","setCalls"]),
     init() {
       // Listener to change View when click on Main Menu
       ipcRenderer.on("set-view", (event, view) => {
@@ -54,7 +54,10 @@ export default {
 
             // Establishing Call Listener
             peer.on("call", (call) => {
-              
+              call.on("close",()=>{
+                console.log("asdasjkfsdkfds");
+              })
+              this.setCalls(call)
             });
           })
         })

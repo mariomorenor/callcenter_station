@@ -15,6 +15,7 @@ export default new Vuex.Store({
       password: "",
       peer_port: 6969,
     },
+    calls: [],
   },
   getters: {},
   mutations: {
@@ -32,6 +33,9 @@ export default new Vuex.Store({
         });
         state.connectedDepartments.push(peer);
       });
+    },
+    setCalls(state, call) {
+      state.calls.push(call);
     },
   },
   actions: {},

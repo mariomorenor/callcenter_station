@@ -5,6 +5,9 @@
             <p>Jonathan Mario Moreno Rivera  </p>
             <strong>Cédula:</strong>
             <p>2300349640</p>
+            <strong>Carrera:</strong>
+            <p>Tecnologías de la Información</p>
+            <hr class="my-2">
             <b-button icon-left="phone-volume" size="is-small" type="is-success"></b-button>
             <b-button icon-left="volume-mute" size="is-small" class="mx-1" type="is-warning"></b-button>
         </div>
@@ -20,7 +23,7 @@ export default {
 
 <style lang="scss">
 .calling-box {
-    width: 200px;
+    width:300px;
     margin: .5rem 1rem;
     padding: 1rem;
     transition: all .3s;
@@ -30,7 +33,8 @@ export default {
 
     &:hover {
         cursor: pointer;
-        transform: scale(1.2);
+        transform: scale(1.1);
+        box-shadow: 2px 2px 10px 2px #0e0e0e;
     }
 }
 </style>

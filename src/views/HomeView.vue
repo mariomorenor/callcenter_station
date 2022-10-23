@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <aside>
+    <!-- <aside>
       <b-menu>
         <b-menu-list>
           <b-menu-item>
@@ -12,11 +12,11 @@
           </b-menu-item>
         </b-menu-list>
       </b-menu>
-    </aside>
+    </aside> -->
     <main class="p-4">
-      <h1 class="title mb-1">Llamadas:</h1>
+      <h1 class="title mb-2">Llamadas:</h1>
       <section class="container-box">
-        <incomming-call></incomming-call>
+        <incomming-call v-for="call in calls" :key="call.id"></incomming-call>
       </section>
     </main>
   </div>
@@ -24,13 +24,22 @@
 
 <script>
 import IncommingCall from "@/components/IncommingCall.vue"
+import { mapState } from "vuex";
 export default {
   name: "HomeView",
   components: {
     IncommingCall
   },
-  mounted() {
+  computed: {
+    ...mapState(["calls"])
   },
+  mounted(){
+    this.calls.forEach(c=>{
+      c.on("close",()=>{
+        console.log("aaaa");
+      })
+    })
+  }
 };
 </script>
 
@@ -47,7 +56,6 @@ aside {
 }
 
 main {
-  margin-left: $aside_width;
   height: 100vh;
 }
 
@@ -56,6 +64,6 @@ main {
 .container-box {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  // justify-content: center;
 }
 </style>
